@@ -3,9 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
-const routes = {
-  quote: (c: RandomQuoteContext) => `/jokes/random?category=${c.category}`
-};
+const apiPath = `https://api.kanye.rest?format=text`;
 
 export interface RandomQuoteContext {
   // The quote's category: 'dev', 'explicit'...
@@ -16,15 +14,17 @@ export interface RandomQuoteContext {
   providedIn: 'root'
 })
 export class QuoteService {
-  constructor(private httpClient: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-  getRandomQuote(context: RandomQuoteContext): Observable<string> {
-    return this.httpClient
-      .cache()
-      .get(routes.quote(context))
-      .pipe(
-        map((body: any) => body.value),
-        catchError(() => of('Error, could not load joke :-('))
-      );
+  getRandomQuote(context: RandomQuoteContext) {
+    this.http
+      .get(apiPath)
+      .toPromise()
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
   }
 }
